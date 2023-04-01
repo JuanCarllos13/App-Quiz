@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Alert, Text, View } from "react-native";
+import { Alert, Text, View, BackHandler } from "react-native";
 import { Audio } from "expo-av";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -15,7 +15,7 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
 
 import { styles } from "./styles";
 import { THEME } from "../../styles/theme";
@@ -113,7 +113,7 @@ export function Quiz() {
       setStatusReply(1);
       handleNextQuestion();
     } else {
-      await playSound(false)
+      await playSound(false);
       setStatusReply(2);
       shakeAnimation();
     }
@@ -230,6 +230,15 @@ export function Quiz() {
     const quizSelected = QUIZ.filter((item) => item.id === id)[0];
     setQuiz(quizSelected);
     setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleStop
+    );
+
+    return () => backHandler.remove();
   }, []);
 
   if (isLoading) {
